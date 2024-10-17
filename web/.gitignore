@@ -13,12 +13,10 @@
 # production
 /build
 
-# images
+# files
 /public/images/*.xcf
 /public/products/
-
-#files
-/src/data/products.json
+/public/products.json
 
 # misc
 .DS_Store

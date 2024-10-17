@@ -1,23 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Products.module.scss';
 import {ProductModel} from "../../models/product.model";
-import store from "../../api/store";
 import Lightbox, {Slide, SlotStyles} from 'yet-another-react-lightbox';
 import {Captions, Fullscreen, Thumbnails, Zoom} from "yet-another-react-lightbox/plugins";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import "yet-another-react-lightbox/plugins/captions.css";
 import "yet-another-react-lightbox/styles.css";
+import {ProductsStoreModel} from "../../models/products-store.model";
 
 const Products: React.FC = () => {
-    const [products, setProducts] = useState<ProductModel[]>([]);
+    const [store, setStore] = useState<ProductsStoreModel | undefined>(undefined);
     const [chosen, setChosen] = useState<ProductModel | undefined>(undefined);
 
     useEffect(() => {
-        setProducts(store.products);
+        const fetchData = async () => {
+            const response = await fetch('/products.json');
+            const jsonData = await response.json();
+            console.log(jsonData)
+            setStore(Object.assign({} as ProductsStoreModel, jsonData));
+        };
+
+        fetchData();
     }, []);
     
     function openSlides(id: string) {
-        setChosen(store.products.find(p => p.Id === id));
+        setChosen(store?.products.find(p => p.Id === id));
     }
     
     function setSlides(id: string) : Slide[] | undefined {
@@ -32,8 +39,8 @@ const Products: React.FC = () => {
     return (
         <>
         <div className={`${styles.gallery} grid grid-cols-5 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5text-white justify-center`}>
-            {!products || products.length === 0 && <span>No items.</span>}
-            {products.map(product => (
+            {!store?.products || store.products.length === 0 && <span>No items.</span>}
+            {store?.products.map(product => (
                 <div key={product.Id} className="product-card relative overflow-hidden w-64 h-64 border-2 rounded-3xl group mx-auto my-4 " onClick={() => openSlides(product.Id)}>
                     {/*<Link to={`/product/${product.Id}`}>*/}
                         <img src={`${product.ThumbnailUrl}`} alt={product.Name} className="mx-auto w-full h-full max-w-64 object-cover transform transition-transform duration-300 hover:scale-110" />
