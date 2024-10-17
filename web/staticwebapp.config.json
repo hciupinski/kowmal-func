@@ -1,0 +1,15 @@
+{
+  "routes": [
+    {
+      "route": "/admin/*",
+      "allowedRoles": ["admin"]
+    },
+    {
+      "route": "/*",
+      "allowedRoles": ["anonymous", "authenticated"]
+    }
+  ],
+  "auth": {
+    "rolesSource": "cookie"
+  }
+}

@@ -1,0 +1,7 @@
+.input-field{
+  @apply w-full rounded-md border border-stroke bg-transparent px-5 py-3 text-base text-body-color outline-none focus:border-primary focus-visible:shadow-none dark:border-dark-3 dark:text-white;
+}
+
+.login-page {
+  @apply col text-white;
+}
