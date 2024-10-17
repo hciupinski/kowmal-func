@@ -7,8 +7,14 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
-    const isAuthenticated = true;  /*useAuth*/
+    const { isAuthenticated, loading } = useAuth();
     
+    console.log('isauthenticated', isAuthenticated)
+
+    if (loading) {
+        return <div>Loading...</div>; // Show loading indicator while checking token
+    }
+
     if (!isAuthenticated) {
         return <Navigate to="/login" />;
     }

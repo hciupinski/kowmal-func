@@ -1,21 +1,31 @@
+using System.Text.Json;
 using HttpMultipartParser;
 
 namespace KowmalApp.Services;
 
 public class LocalBlobClient : IStaticWebBlobClient
 {
-    public Task<string> UploadFile(string path, FilePart file)
+    public async Task<string> UploadFile(string path, FilePart file)
     {
-        throw new NotImplementedException();
+        await using var stream = file.Data;
+        await using FileStream fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
+
+        await stream.CopyToAsync(fileStream);
+
+        return path;
     }
 
-    public Task<List<T>?> GetDbContent<T>(string path) where T : class
+    public async Task<List<T>?> GetDbContent<T>(string path) where T : class
     {
-        throw new NotImplementedException();
+        string jsonString = await File.ReadAllTextAsync(path);
+        
+        return JsonSerializer.Deserialize<List<T>>(jsonString);
     }
 
-    public Task UpdateDbContent<T>(string path, List<T> items) where T : class
+    public async Task UpdateDbContent<T>(string path, List<T> items) where T : class
     {
-        throw new NotImplementedException();
+        string updatedJsonString = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
+        
+        await File.WriteAllTextAsync(path, updatedJsonString);
     }
 }

@@ -1,6 +1,7 @@
 using HttpMultipartParser;
 using KowmalApp.Helpers;
 using KowmalApp.Models;
+using KowmalApp.Services;
 
 namespace KowmalApp.Endpoints;
 
@@ -19,12 +20,12 @@ using System.Linq;
 public class UploadProduct
 {
     private readonly ILogger _logger;
-    private readonly BlobServiceClient _blobServiceClient;
+    private readonly IStaticWebBlobClient _webBlobClient;
 
-    public UploadProduct(ILoggerFactory loggerFactory, BlobServiceClient blobServiceClient)
+    public UploadProduct(ILoggerFactory loggerFactory, IStaticWebBlobClient webBlobClient)
     {
         _logger = loggerFactory.CreateLogger<UploadProduct>();
-        _blobServiceClient = blobServiceClient;
+        _webBlobClient = webBlobClient;
     }
 
     [Function("UploadProduct")]
@@ -62,29 +63,18 @@ public class UploadProduct
 
         var productId = Guid.NewGuid().ToString();
         var imageUrls = new List<string>();
-        var containerClient = _blobServiceClient.GetBlobContainerClient("products");
 
         foreach (var file in files)
         {
-            var blobClient = containerClient.GetBlobClient($"products/{productId}/{file.FileName}");
+            var productsPath = $"{Environment.GetEnvironmentVariable("ProductsDir")}/{productId}/{file.FileName}";
+            var urlPath = await _webBlobClient.UploadFile(productsPath, file);
 
-            using (var stream = file.Data)
-            {
-                await blobClient.UploadAsync(stream);
-            }
-
-            imageUrls.Add(blobClient.Uri.ToString());
+            imageUrls.Add(urlPath);
         }
 
         // Update products.json
-        var productsBlobClient = containerClient.GetBlobClient("products.json");
-        List<ProductDetails> products = new List<ProductDetails>();
-
-        if (await productsBlobClient.ExistsAsync())
-        {
-            var downloadInfo = await productsBlobClient.DownloadAsync();
-            products = await JsonSerializer.DeserializeAsync<List<ProductDetails>>(downloadInfo.Value.Content);
-        }
+        var productsStorePath = $"{Environment.GetEnvironmentVariable("ProductsStorePath")}";
+        var productsStore = await _webBlobClient.GetDbContent<ProductDetails>(productsStorePath);
 
         var newProduct = new ProductDetails
         {
@@ -95,14 +85,10 @@ public class UploadProduct
             ThumbnailUrl = imageUrls.First()
         };
 
-        products.Add(newProduct);
+        productsStore?.Add(newProduct);
 
         // Upload updated products list
-        var updatedJson = JsonSerializer.Serialize(products);
-        using (var memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(updatedJson)))
-        {
-            await productsBlobClient.UploadAsync(memoryStream, overwrite: true);
-        }
+        await _webBlobClient.UpdateDbContent(productsStorePath, productsStore!);
 
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteStringAsync("Product uploaded successfully.");

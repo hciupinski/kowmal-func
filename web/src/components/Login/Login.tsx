@@ -14,11 +14,13 @@ const Login: React.FC = () => {
         e.preventDefault();
         try {
             const response = await apiClient.post('/authenticate', credentials);
-            const token = response.data.token;
-            // Store the token securely
-            localStorage.setItem('token', token);
-            // Redirect to admin page or wherever appropriate
-            navigate('/admin/upload');
+            if (response.status === 200) {
+                const token = response.data.token;
+                // Store the token securely
+                localStorage.setItem('token', token);
+                // Redirect to admin page or wherever appropriate
+                navigate('/admin/upload');
+            }
         } catch (error) {
             console.error('Authentication failed:', error);
             // Handle authentication error (e.g., display message)

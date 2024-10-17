@@ -8,26 +8,25 @@ interface JwtPayload {
 
 export const useAuth = () => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
+    const [loading, setLoading] = useState(true);
+    
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
             try {
                 const decoded = jwtDecode<JwtPayload>(token);
-                console.log(decoded)
                 const isTokenValid = decoded.exp * 1000 > Date.now();
-                console.log(isTokenValid)
                 setIsAuthenticated(isTokenValid);
                 if (!isTokenValid) {
                     localStorage.removeItem('token');
                 }
             } catch (error) {
-                console.error('Invalid token:', error);
                 localStorage.removeItem('token');
                 setIsAuthenticated(false);
             }
         }
+        setLoading(false);
     }, []);
 
-    return isAuthenticated;
+    return { isAuthenticated, loading };
 };
