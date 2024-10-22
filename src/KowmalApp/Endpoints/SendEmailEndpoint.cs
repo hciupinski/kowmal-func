@@ -9,16 +9,15 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using System.Text.Json;
 using System.IO;
 
-public class SendEmail
+public class SendEmailEndpoint
 {
     private readonly ILogger _logger;
 
-    public SendEmail(ILoggerFactory loggerFactory)
+    public SendEmailEndpoint(ILoggerFactory loggerFactory)
     {
-        _logger = loggerFactory.CreateLogger<SendEmail>();
+        _logger = loggerFactory.CreateLogger<SendEmailEndpoint>();
     }
 
     [Function("SendEmail")]

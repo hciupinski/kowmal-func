@@ -8,18 +8,17 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using System.Net;
-using System.Text.Json;
 using System.IO;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System;
 
-public class Authenticate
+public class AuthenticateEndpoint
 {
     private readonly ILogger _logger;
 
-    public Authenticate(ILoggerFactory loggerFactory)
+    public AuthenticateEndpoint(ILoggerFactory loggerFactory)
     {
         _logger = loggerFactory.CreateLogger<UploadProduct>();
     }
