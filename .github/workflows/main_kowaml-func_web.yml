@@ -1,0 +1,46 @@
+name: Blob storage website CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2B76C5A14562403885D258E206B857BD }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4F74DCD3C03E440B8474635E87C840B4 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4BEF95AE5923441795F0412419210AAA }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Build website
+        working-directory: ./web
+        run: |
+          npm install
+          npm run build
+
+      - name: Upload to blob storage
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az storage blob upload-batch --account-name kowmalfunc --auth-mode key -d '$web' -s ./out --overwrite
+      # - name: Purge CDN endpoint
+      #   uses: azure/CLI@v1
+      #   with:
+      #     inlineScript: |
+      #        az cdn endpoint purge --content-paths  "/*" --profile-name "CDN_PROFILE_NAME" --name "CDN_ENDPOINT" --resource-group "RESOURCE_GROUP"
+      
+      # Azure logout
+      - name: logout
+        run: |
+          az logout
+        if: always()
