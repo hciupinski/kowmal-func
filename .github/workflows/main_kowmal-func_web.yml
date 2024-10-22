@@ -4,8 +4,8 @@ on:
   push:
     branches: [ main ]
     paths:
-      - './web/'
-    workflow_dispatch:
+      - 'web/**'
+  workflow_dispatch:
 
 jobs:
   build:
