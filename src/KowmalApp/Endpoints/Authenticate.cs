@@ -19,9 +19,8 @@ public class Authenticate
 {
     [Function("Authenticate")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "authenticate")] HttpRequestData req, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "authenticate")] HttpRequestData req)
     {
-        log.LogInformation("Processing the auth request.");
         try
         {
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
@@ -29,9 +28,9 @@ public class Authenticate
 
             if (loginRequest == null)
             {
-                var unauthorizedResponse = req.CreateResponse(HttpStatusCode.BadRequest);
-                await unauthorizedResponse.WriteStringAsync("Invalid username or password.");
-                return unauthorizedResponse;
+                var badRequestResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+                await badRequestResponse.WriteStringAsync("Invalid username or password.");
+                return badRequestResponse;
             }
 
             // Validate the credentials
@@ -53,10 +52,9 @@ public class Authenticate
         }
         catch (Exception ex)
         {
-            log.LogWarning("Unhandled exception. {message}", ex.Message);
-            var unauthorizedResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
-            await unauthorizedResponse.WriteStringAsync("Invalid username or password.");
-            return unauthorizedResponse;
+            var internalServerErrorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
+            await internalServerErrorResponse.WriteStringAsync($"Invalid username or password. {ex.Message}");
+            return internalServerErrorResponse;
         }
     }
 
