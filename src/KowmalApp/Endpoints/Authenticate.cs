@@ -1,4 +1,5 @@
 using KowmalApp.Stores;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace KowmalApp.Endpoints;
@@ -18,27 +19,45 @@ public class Authenticate
 {
     [Function("Authenticate")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "authenticate")] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "authenticate")] HttpRequestData req, ILogger log)
     {
-        var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        var loginRequest = JsonConvert.DeserializeObject<LoginRequest>(requestBody)!;
-
-        // Validate the credentials
-        var user = UserStore.GetUser(loginRequest.Username);
-        if (user == null || !BCrypt.Net.BCrypt.Verify(loginRequest.Password, user.PasswordHash))
+        log.LogInformation("Processing the auth request.");
+        try
         {
-            var unauthorizedResponse = req.CreateResponse(HttpStatusCode.Unauthorized);
+            var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            var loginRequest = JsonConvert.DeserializeObject<LoginRequest>(requestBody);
+
+            if (loginRequest == null)
+            {
+                var unauthorizedResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+                await unauthorizedResponse.WriteStringAsync("Invalid username or password.");
+                return unauthorizedResponse;
+            }
+
+            // Validate the credentials
+            var user = UserStore.GetUser(loginRequest.Username);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginRequest.Password, user.PasswordHash))
+            {
+                var unauthorizedResponse = req.CreateResponse(HttpStatusCode.Unauthorized);
+                await unauthorizedResponse.WriteStringAsync("Invalid username or password.");
+                return unauthorizedResponse;
+            }
+
+            // Generate JWT token
+            var token = GenerateJwtToken(user.Username);
+
+            // Return the token
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(new { token });
+            return response;
+        }
+        catch (Exception ex)
+        {
+            log.LogWarning("Unhandled exception. {message}", ex.Message);
+            var unauthorizedResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
             await unauthorizedResponse.WriteStringAsync("Invalid username or password.");
             return unauthorizedResponse;
         }
-
-        // Generate JWT token
-        var token = GenerateJwtToken(user.Username);
-
-        // Return the token
-        var response = req.CreateResponse(HttpStatusCode.OK);
-        await response.WriteAsJsonAsync(new { token });
-        return response;
     }
 
     private string GenerateJwtToken(string username)
