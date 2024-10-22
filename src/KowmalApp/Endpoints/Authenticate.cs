@@ -17,10 +17,18 @@ using System;
 
 public class Authenticate
 {
+    private readonly ILogger _logger;
+
+    public Authenticate(ILoggerFactory loggerFactory)
+    {
+        _logger = loggerFactory.CreateLogger<UploadProduct>();
+    }
+
     [Function("Authenticate")]
     public async Task<HttpResponseData> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "authenticate")] HttpRequestData req)
     {
+        _logger.LogInformation("Processing the Authenticate request.");
         try
         {
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
@@ -28,8 +36,9 @@ public class Authenticate
 
             if (loginRequest == null)
             {
+                _logger.LogWarning("Invalid request body.");
                 var badRequestResponse = req.CreateResponse(HttpStatusCode.BadRequest);
-                await badRequestResponse.WriteStringAsync("Invalid username or password.");
+                await badRequestResponse.WriteStringAsync("Invalid request body.");
                 return badRequestResponse;
             }
 
@@ -37,6 +46,7 @@ public class Authenticate
             var user = UserStore.GetUser(loginRequest.Username);
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginRequest.Password, user.PasswordHash))
             {
+                _logger.LogWarning("Invalid username or password.");
                 var unauthorizedResponse = req.CreateResponse(HttpStatusCode.Unauthorized);
                 await unauthorizedResponse.WriteStringAsync("Invalid username or password.");
                 return unauthorizedResponse;
@@ -52,8 +62,9 @@ public class Authenticate
         }
         catch (Exception ex)
         {
+            _logger.LogError("Unhandled exception.");
             var internalServerErrorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
-            await internalServerErrorResponse.WriteStringAsync($"Invalid username or password. {ex.Message}");
+            await internalServerErrorResponse.WriteStringAsync($"Unhandled exception. {ex.Message}");
             return internalServerErrorResponse;
         }
     }

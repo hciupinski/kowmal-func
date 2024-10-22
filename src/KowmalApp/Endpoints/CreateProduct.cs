@@ -34,6 +34,7 @@ public class UploadProduct
         // Extract token from Authorization header
         if (!req.Headers.TryGetValues("Authorization", out var authHeaders) || !authHeaders.Any())
         {
+            _logger.LogWarning("Missing authorization header.");
             return req.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
@@ -43,6 +44,7 @@ public class UploadProduct
 
         if (principal == null)
         {
+            _logger.LogWarning("Invalid token.");
             return req.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
@@ -53,6 +55,7 @@ public class UploadProduct
 
         if (string.IsNullOrEmpty(name) || !files.Any())
         {
+            _logger.LogWarning("Name and images are required.");
             var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
             await badResponse.WriteStringAsync("Name and images are required.");
             return badResponse;
@@ -75,6 +78,7 @@ public class UploadProduct
 
         if (productsStore == null)
         {
+            _logger.LogWarning("Missing store file.");
             throw new Exception($"Cannot access {nameof(ProductsStore)}");
         }
 

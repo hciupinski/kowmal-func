@@ -38,7 +38,6 @@ public class SendEmail
         var contactAddress = Environment.GetEnvironmentVariable("ContactAddress");
         
         var from = new EmailAddress(senderEmail, senderName);
-        var subject = $"Kowmal.com: New message from: {data.Name} {data.Message}";
         var to = new EmailAddress(contactAddress, senderName);
 
         var content = new EmailContent(data.Name, data.Email, data.Message);
