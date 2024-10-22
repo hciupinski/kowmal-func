@@ -1,4 +1,5 @@
 using KowmalApp.Stores;
+using Newtonsoft.Json;
 
 namespace KowmalApp.Endpoints;
 
@@ -19,13 +20,8 @@ public class Authenticate
     public async Task<HttpResponseData> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "authenticate")] HttpRequestData req)
     {
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-        
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        var loginRequest = JsonSerializer.Deserialize<LoginRequest>(requestBody, options)!;
+        var loginRequest = JsonConvert.DeserializeObject<LoginRequest>(requestBody)!;
 
         // Validate the credentials
         var user = UserStore.GetUser(loginRequest.Username);

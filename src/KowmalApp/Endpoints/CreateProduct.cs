@@ -1,18 +1,15 @@
 using HttpMultipartParser;
 using KowmalApp.Helpers;
 using KowmalApp.Models;
-using KowmalApp.Services;
+using KowmalApp.Services.Interfaces;
 
 namespace KowmalApp.Endpoints;
 
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Azure.Storage.Blobs;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Text.Json;
-using System.IO;
 using System;
 using System.Net;
 using System.Linq;
@@ -74,7 +71,12 @@ public class UploadProduct
 
         // Update products.json
         var productsStorePath = $"{Environment.GetEnvironmentVariable("ProductsStorePath")}";
-        var productsStore = await _webBlobClient.GetDbContent<ProductDetails>(productsStorePath);
+        var productsStore = await _webBlobClient.GetDbContent(productsStorePath);
+
+        if (productsStore == null)
+        {
+            throw new Exception($"Cannot access {nameof(ProductsStore)}");
+        }
 
         var newProduct = new ProductDetails
         {
@@ -85,8 +87,9 @@ public class UploadProduct
             ThumbnailUrl = imageUrls.First()
         };
 
-        productsStore?.Add(newProduct);
-
+        productsStore.Products.Add(newProduct);
+        productsStore.UpdatedAt = DateTime.Now;
+        
         // Upload updated products list
         await _webBlobClient.UpdateDbContent(productsStorePath, productsStore!);
 

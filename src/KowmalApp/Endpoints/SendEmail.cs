@@ -1,4 +1,5 @@
 using KowmalApp.Models;
+using Newtonsoft.Json;
 
 namespace KowmalApp.Endpoints;
 
@@ -25,19 +26,28 @@ public class SendEmail
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "SendEmail")] HttpRequestData req)
     {
         _logger.LogInformation("Processing SendEmail request.");
-
+        
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        var data = JsonSerializer.Deserialize<ContactFormData>(requestBody);
+        var data = JsonConvert.DeserializeObject<ContactFormData>(requestBody);
 
         var apiKey = Environment.GetEnvironmentVariable("SendGridApiKey");
         var client = new SendGridClient(apiKey);
 
-        var from = new EmailAddress(data.Email, data.Name);
-        var subject = "New Contact Form Submission";
-        var to = new EmailAddress("blacksmith@example.com", "Blacksmith Master");
-        var plainTextContent = data.Message;
-        var htmlContent = $"<p>{data.Message}</p>";
-        var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+        var senderEmail = Environment.GetEnvironmentVariable("SenderIdentityAddress");
+        var senderName = Environment.GetEnvironmentVariable("SenderIdentityName");
+        var contactAddress = Environment.GetEnvironmentVariable("ContactAddress");
+        
+        var from = new EmailAddress(senderEmail, senderName);
+        var subject = $"Kowmal.com: New message from: {data.Name} {data.Message}";
+        var to = new EmailAddress(contactAddress, senderName);
+
+        var content = new EmailContent(data.Name, data.Email, data.Message);
+        
+        var msg = MailHelper.CreateSingleTemplateEmail(
+            from,
+            to,
+            Environment.GetEnvironmentVariable("SendGridTemplateId"),
+            content);
 
         var sendGridResponse = await client.SendEmailAsync(msg);
 
@@ -57,4 +67,6 @@ public class SendEmail
 
         return response;
     }
+
+    private record EmailContent(string SenderName, string SenderEmail, string Message);
 }

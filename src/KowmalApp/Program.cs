@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Azure.Storage.Blobs;
 using KowmalApp.Services;
+using KowmalApp.Services.Interfaces;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
@@ -17,12 +18,6 @@ var host = new HostBuilder()
         #else 
             services.AddScoped<IStaticWebBlobClient, StaticWebBlobClient>();
         #endif
-        
-        services.Configure<JsonSerializerOptions>(options =>
-        {
-            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            options.WriteIndented = true;
-        });
     })
     .Build();
 

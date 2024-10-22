@@ -19,23 +19,24 @@ const ContactForm: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // apiClient.post('/SendEmail', formData)
-        //     .then(response => {
-        //         if (response.status === 200) {
-        //             setStatus('Message sent successfully!');
-        //             setFormData({ name: '', email: '', message: '' });
-        //         } else {
-        //             setStatus('Failed to send message.');
-        //         }
-        //     })
-        //     .catch(() => setStatus('Failed to send message.'));
+        apiClient.post('/SendEmail', formData)
+            .then(response => {
+                if (response.status === 200) {
+                    setStatus('Message sent successfully!');
+                    setFormData({ name: '', email: '', message: '' });
+                } else {
+                    setStatus('Failed to send message.');
+                }
+            })
+            .catch(() => setStatus('Failed to send message.'));
     };
 
     return (
-        <div className={`${styles.contactForm} p-6 text-white`}>
+        <div className={`${styles.contactForm} mt-16 mx-2 p-6 text-white bg-amber-900 bg-opacity-60 rounded-2xl`}>
             <h2 className="text-3xl mb-4">Contact the Master</h2>
             {status && <p className="status text-yellow-500 mb-4">{status}</p>}
             <form onSubmit={handleSubmit} className="space-y-4">
+                <div className={'w-96'}>
                 <label className="block">
                     Name:
                     <input
@@ -45,6 +46,7 @@ const ContactForm: React.FC = () => {
                         onChange={handleChange}
                         required
                         className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 text-white"
+                        placeholder={'How should I address You?'}
                     />
                 </label>
 
@@ -57,9 +59,10 @@ const ContactForm: React.FC = () => {
                         onChange={handleChange}
                         required
                         className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 text-white"
+                        placeholder={'Your email'}
                     />
                 </label>
-
+                </div>
                 <label className="block">
                     Message:
                     <textarea
@@ -69,10 +72,12 @@ const ContactForm: React.FC = () => {
                         required
                         className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 text-white"
                         rows={5}
+                        maxLength={1200}
+                        placeholder={'Please provide some details of what You are looking for...'}
                     />
                 </label>
 
-                <button type="submit" className="px-4 py-2 bg-yellow-500 text-black font-bold hover:bg-yellow-600">
+                <button type="submit" className="px-4 py-2 bg-amber-500 text-black font-bold hover:bg-amber-400 rounded">
                     Send Message
                 </button>
             </form>

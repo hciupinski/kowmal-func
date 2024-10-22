@@ -1,6 +1,8 @@
-using System.Text.Json;
 using Azure.Storage.Blobs;
 using HttpMultipartParser;
+using KowmalApp.Models;
+using KowmalApp.Services.Interfaces;
+using Newtonsoft.Json;
 
 namespace KowmalApp.Services;
 
@@ -25,24 +27,25 @@ public class StaticWebBlobClient : IStaticWebBlobClient
         return blobClient.Uri.ToString();
     }
 
-    public async Task<List<T>?> GetDbContent<T>(string path) where T : class
+    public async Task<ProductsStore?> GetDbContent(string path)
     {
         var blobClient = _container.GetBlobClient(path);
-        List<T>? products = new List<T>();
 
         if (await blobClient.ExistsAsync())
         {
             var downloadInfo = await blobClient.DownloadAsync();
-            products = await JsonSerializer.DeserializeAsync<List<T>>(downloadInfo.Value.Content);
+            using var streamReader = new StreamReader(downloadInfo.Value.Content);
+            var store = await streamReader.ReadToEndAsync();
+            return JsonConvert.DeserializeObject<ProductsStore>(store);
         }
 
-        return products;
+        throw new Exception("Store file not found");
     }
 
-    public async Task UpdateDbContent<T>(string path, List<T> items) where T : class
+    public async Task UpdateDbContent(string path, ProductsStore store)
     {
         var blobClient = _container.GetBlobClient(path);
-        var updatedJson = JsonSerializer.Serialize(items);
+        var updatedJson = JsonConvert.SerializeObject(store);
         using var memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(updatedJson));
         await blobClient.UploadAsync(memoryStream, overwrite: true);
     }

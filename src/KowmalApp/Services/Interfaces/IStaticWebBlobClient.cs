@@ -1,10 +1,11 @@
 using HttpMultipartParser;
+using KowmalApp.Models;
 
-namespace KowmalApp.Services;
+namespace KowmalApp.Services.Interfaces;
 
 public interface IStaticWebBlobClient
 {
     Task<string> UploadFile(string path, FilePart file);
-    Task<List<T>?> GetDbContent<T>(string path) where T : class;
-    Task UpdateDbContent<T>(string path, List<T> items) where T : class;
+    Task<ProductsStore?> GetDbContent(string path);
+    Task UpdateDbContent(string path, ProductsStore store);
 }

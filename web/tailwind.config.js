@@ -8,6 +8,10 @@ module.exports = {
       backgroundImage: {
         'main-page': "url('/public/images/background.png')"
       },
+      fontFamily: {
+        agdasima: ['Agdasima', 'sans-serif'],
+        pirata: ['Pirata One', 'sans-serif'],
+      },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
