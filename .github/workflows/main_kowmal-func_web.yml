@@ -7,6 +7,9 @@ on:
       - 'web/**'
   workflow_dispatch:
 
+env:
+  CI: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,7 +41,7 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az storage blob upload-batch --account-name kowmalfunc --auth-mode key -d '$web' -s ./out --overwrite
+            az storage blob upload-batch --account-name kowmalfunc --auth-mode key -d '$web' -s ./build --overwrite
       # - name: Purge CDN endpoint
       #   uses: azure/CLI@v1
       #   with:
