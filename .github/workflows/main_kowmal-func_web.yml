@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v3
         
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2B76C5A14562403885D258E206B857BD }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4F74DCD3C03E440B8474635E87C840B4 }}
