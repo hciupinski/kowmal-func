@@ -23,9 +23,7 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2B76C5A14562403885D258E206B857BD }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4F74DCD3C03E440B8474635E87C840B4 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4BEF95AE5923441795F0412419210AAA }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Install Node.js
         uses: actions/setup-node@v3
