@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiClient from "../../api/apiClient";
 import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
-console.log(process.env.REACT_APP_GOOGLE_CLIENTID)
+
     const handleGoogleLoginSuccess = (response: any) => {
         const { credential } = response;
 

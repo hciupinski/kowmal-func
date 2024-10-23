@@ -12,7 +12,6 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
-using System.Net;
 using System.Linq;
 
 public class UploadProduct
@@ -32,26 +31,8 @@ public class UploadProduct
     {
         _logger.LogInformation("Processing UploadProduct request.");
         
-        // Extract token from Authorization header
-        if (!req.Headers.Contains("Authorization"))
-        {
-            return new UnauthorizedResult();
-        }
-        
-        // Extract and validate the token (Azure will validate the token for you)
-        string token = req.Headers.FirstOrDefault(x => x.Key == "Authorization").Value.First().Replace("Bearer ", "");
-        var handler = new JwtSecurityTokenHandler();
-        var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
-        string email = jwtToken?.Claims.FirstOrDefault(claim => claim.Type == "email")?.Value;
-
-        // List of allowed admin emails
-        var allowedEmails = Environment.GetEnvironmentVariable("AllowedEmails").Split(",");
-        
-        // Check if the user's email is in the allowed list
-        if (email == null || !allowedEmails.Contains(email))
-        {
-            return new UnauthorizedResult();
-        }
+        if (!ValidateAuthorization(req))
+            return new UnauthorizedObjectResult("Request is unauthorized!");
 
         var formData = await MultipartFormDataParser.ParseAsync(req.Body);
         var name = formData.GetParameterValue("name");
@@ -101,5 +82,33 @@ public class UploadProduct
         await _webBlobClient.UpdateDbContent(productsStorePath, productsStore!);
 
         return new OkObjectResult("Product uploaded successfully.");
+    }
+
+    private static bool ValidateAuthorization(HttpRequestData req)
+    {
+        // Extract token from Authorization header
+        if (!req.Headers.Contains("Authorization"))
+        {
+            return false;
+        }
+        
+        // Extract and validate the token (Azure will validate the token for you)
+        string token = req.Headers.FirstOrDefault(x => x.Key == "Authorization").Value.First().Replace("Bearer ", "");
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+        string? email = jwtToken?.Claims.FirstOrDefault(claim => claim.Type == "email")?.Value;
+
+        // List of allowed admin emails
+        var allowedEmails = Environment.GetEnvironmentVariable("AllowedEmails")!.Split(",");
+        
+        // Check if the user's email is in the allowed list
+        if (email == null || !allowedEmails.Contains(email))
+        {
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
