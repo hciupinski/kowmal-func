@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@react-oauth/google": "^0.12.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -15,12 +16,12 @@
     "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-photo-album": "^2.3.1",
     "react-router-dom": "^6.26.2",
     "react-scripts": "5.0.1",
-    "react-photo-album": "^2.3.1",
-    "yet-another-react-lightbox": "^3.17.3",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yet-another-react-lightbox": "^3.17.3"
   },
   "scripts": {
     "start": "react-scripts start",

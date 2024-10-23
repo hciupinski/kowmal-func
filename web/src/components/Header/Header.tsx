@@ -20,18 +20,16 @@ const Header: React.FC = () => {
     };
     
     return (
-        <header className={`text-white flex justify-between p-4 font-agdasima`}>
+        <header className={`mx-6 text-white flex justify-between p-4 font-agdasima`}>
             <div className={''}>
                 <div className="logo font-pirata">
                     <a href={"/"}>
-                        {/*<img src="/images/logo-t.png" alt="kowmal-logo" className="h-12"/>*/}
                         <p className={'bold'}>kowmal.com</p>
                     </a>
                 </div>
-                {/*<p className={`my-4`}>kowmal.com</p>*/}
             </div>
             <div>
-                <a href={'/contact'} className={'mr-10'}>Contact</a>
+                <a href={'/contact'}>Contact</a>
             </div>
 
 
