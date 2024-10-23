@@ -1,7 +1,8 @@
+using System.IdentityModel.Tokens.Jwt;
 using HttpMultipartParser;
-using KowmalApp.Helpers;
 using KowmalApp.Models;
 using KowmalApp.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KowmalApp.Endpoints;
 
@@ -26,26 +27,30 @@ public class UploadProduct
     }
 
     [Function("UploadProduct")]
-    public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "UploadProduct")] HttpRequestData req)
+    public async Task<IActionResult> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UploadProduct")] HttpRequestData req)
     {
         _logger.LogInformation("Processing UploadProduct request.");
         
         // Extract token from Authorization header
-        if (!req.Headers.TryGetValues("Authorization", out var authHeaders) || !authHeaders.Any())
+        if (!req.Headers.Contains("Authorization"))
         {
-            _logger.LogWarning("Missing authorization header.");
-            return req.CreateResponse(HttpStatusCode.Unauthorized);
+            return new UnauthorizedResult();
         }
+        
+        // Extract and validate the token (Azure will validate the token for you)
+        string token = req.Headers.FirstOrDefault(x => x.Key == "Authorization").Value.First().Replace("Bearer ", "");
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+        string email = jwtToken?.Claims.FirstOrDefault(claim => claim.Type == "email")?.Value;
 
-        var bearerToken = authHeaders.First().Split(' ').Last();
-
-        var principal = TokenValidator.ValidateToken(bearerToken);
-
-        if (principal == null)
+        // List of allowed admin emails
+        var allowedEmails = Environment.GetEnvironmentVariable("AllowedEmails").Split(",");
+        
+        // Check if the user's email is in the allowed list
+        if (email == null || !allowedEmails.Contains(email))
         {
-            _logger.LogWarning("Invalid token.");
-            return req.CreateResponse(HttpStatusCode.Unauthorized);
+            return new UnauthorizedResult();
         }
 
         var formData = await MultipartFormDataParser.ParseAsync(req.Body);
@@ -56,9 +61,7 @@ public class UploadProduct
         if (string.IsNullOrEmpty(name) || !files.Any())
         {
             _logger.LogWarning("Name and images are required.");
-            var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
-            await badResponse.WriteStringAsync("Name and images are required.");
-            return badResponse;
+            return new BadRequestObjectResult("Name and images are required.");
         }
 
         var productId = Guid.NewGuid().ToString();
@@ -97,9 +100,6 @@ public class UploadProduct
         // Upload updated products list
         await _webBlobClient.UpdateDbContent(productsStorePath, productsStore!);
 
-        var response = req.CreateResponse(HttpStatusCode.OK);
-        await response.WriteStringAsync("Product uploaded successfully.");
-
-        return response;
+        return new OkObjectResult("Product uploaded successfully.");
     }
 }
