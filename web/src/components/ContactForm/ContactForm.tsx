@@ -32,36 +32,36 @@ const ContactForm: React.FC = () => {
     };
 
     return (
-        <div className={`${styles.contactForm} mt-16 mx-2 p-6 text-white bg-amber-900 bg-opacity-60 rounded-2xl`}>
+        <div className={`${styles.contactForm} mt-16 mx-2 md:mx-auto p-6 text-white bg-amber-900 bg-opacity-60 rounded-2xl max-w-[1000px]`}>
             <h2 className="text-3xl mb-4">Contact the Master</h2>
             {status && <p className="status text-yellow-500 mb-4">{status}</p>}
             <form onSubmit={handleSubmit} className="space-y-4">
-                <div className={'w-96'}>
-                <label className="block">
-                    Name:
-                    <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 text-white"
-                        placeholder={'How should I address You?'}
-                    />
-                </label>
-
-                <label className="block">
-                    Email:
-                    <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 text-white"
-                        placeholder={'Your email'}
-                    />
-                </label>
+                <div className={'w-100 md:w-96'}>
+                    <label className="block">
+                        Name:
+                        <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                            className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 text-white"
+                            placeholder={'How should I address You?'}
+                        />
+                    </label>
+    
+                    <label className="block">
+                        Email:
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                            className="w-full mt-1 p-2 bg-gray-700 border border-gray-600 text-white"
+                            placeholder={'Your email'}
+                        />
+                    </label>
                 </div>
                 <label className="block">
                     Message:
