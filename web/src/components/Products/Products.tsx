@@ -14,9 +14,9 @@ const Products: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('/products.json');
+            const response = await fetch(`/products.json?v=${new Date().getTime()}`);
             const jsonData = await response.json();
-            console.log(jsonData)
+
             setStore(Object.assign({} as ProductsStoreModel, jsonData));
         };
 
@@ -30,8 +30,6 @@ const Products: React.FC = () => {
     function setSlides(id: string) : Slide[] | undefined {
         if(!chosen)
             return;
-        
-        console.log(chosen)
         
         return chosen.Images.map(img => {
             return {src: img, alt: 'alt text'} as Slide;
