@@ -51,9 +51,9 @@ public class UploadProduct
         foreach (var file in files)
         {
             var productsPath = $"{Environment.GetEnvironmentVariable("ProductsDir")}/{productId}/{file.FileName}";
-            var urlPath = await _webBlobClient.UploadFile(productsPath, file);
+            await _webBlobClient.UploadFile(productsPath, file);
 
-            imageUrls.Add(urlPath);
+            imageUrls.Add($"/{productsPath}");
         }
 
         // Update products.json
