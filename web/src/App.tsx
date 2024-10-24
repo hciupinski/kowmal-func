@@ -15,7 +15,7 @@ import NotAuthorized from "./components/NotAuthorized/NotAuthorized";
 const App: React.FC = () => {  
   return (
     <Router>
-      <div className="app flex flex-col min-h-screen h-full bg-black">
+      <div className="app flex flex-col min-h-screen h-full bg-black min-w-[400px]">
         <Header />
         <main className="flex-grow">
           <div className={'container min-w-[75%] min-h-[75%] h-full mx-auto bg-opacity-80 rounded'}>
