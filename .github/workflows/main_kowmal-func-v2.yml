@@ -8,6 +8,7 @@ on:
     branches:
       - main
     paths:
+      - '.github/workflows/main_kowmal-func-v2.yml'
       - 'src/**'
   workflow_dispatch:
 
