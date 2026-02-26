@@ -30,12 +30,15 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
+      - name: 'Resolve Project Dependencies Using Dotnet'
+        shell: bash
+        run: |
+          dotnet restore ./src/KowmalApp.sln
+
       - name: 'Validate Project Build'
         shell: bash
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          dotnet build --configuration Release
-          popd
+          dotnet build ./src/KowmalApp.sln --configuration Release --no-restore
       
       - name: Login to Azure
         uses: azure/login@v2
