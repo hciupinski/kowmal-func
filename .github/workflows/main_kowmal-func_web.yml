@@ -46,7 +46,7 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az cdn endpoint purge --content-paths  "/*" --profile-name "kowmal-cdn" --name "kowmal-func" --resource-group "kowmal-admin-ui_group"
+            az cdn endpoint purge --content-paths  "/*" --profile-name "kowmal-cdn" --name "kowmal-func-v2" --resource-group "kowmal-admin-ui_group"
       
       # Azure logout
       - name: logout
