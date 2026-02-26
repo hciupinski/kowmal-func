@@ -1,3 +1,299 @@
 .gallery {
-  // Custom styles or overrides can be added here
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.empty {
+  color: #8e8e8e;
+  font-size: 1rem;
+}
+
+.card {
+  position: relative;
+  border: 0;
+  background: #111;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  width: 100%;
+  height: clamp(220px, 30vw, 520px);
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 360ms ease;
+}
+
+.cardOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 14px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.86), rgba(0, 0, 0, 0));
+  color: #ececec;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 220ms ease, transform 220ms ease;
+
+  h3 {
+    margin: 0;
+    font-family: 'Cinzel', serif;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+  }
+}
+
+.card:hover .cardImage {
+  transform: scale(1.04);
+}
+
+.card:hover .cardOverlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.viewerOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 28px;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.95);
+  cursor: pointer;
+}
+
+.viewer {
+  position: relative;
+  width: min(1280px, 100%);
+  height: min(100%, calc(100dvh - 56px));
+  overflow: hidden;
+  z-index: 1;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 12px 80px 18px;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: 12px;
+}
+
+.closeButton {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  border: 0;
+  background: transparent;
+  color: #9c9c9c;
+  font-size: 4rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.closeButton:hover {
+  color: #fff;
+}
+
+.imageWrap {
+  margin: 0 auto;
+  width: min(740px, 100%);
+  height: 100%;
+  max-height: calc(100dvh - 350px);
+  display: grid;
+  place-items: center;
+}
+
+.mainImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.arrowButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #a8a8a8;
+  font-size: 5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 10px;
+  transition: color 180ms ease;
+}
+
+.arrowButton:hover {
+  color: #fff;
+}
+
+.arrowLeft {
+  left: 8px;
+}
+
+.arrowRight {
+  right: 8px;
+}
+
+.thumbs {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 0;
+}
+
+.thumbButton {
+  width: 96px;
+  height: 76px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #050505;
+  padding: 0;
+  cursor: pointer;
+  transition: border-color 180ms ease;
+}
+
+.thumbButton:hover,
+.thumbActive {
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.thumbImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.meta {
+  margin-top: 0;
+
+  h2 {
+    margin: 0;
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(1.5rem, 2.2vw, 2.4rem);
+    font-weight: 600;
+  }
+
+  p {
+    max-width: 920px;
+    margin: 10px auto 0;
+    color: #9b9b9b;
+    font-size: clamp(0.95rem, 1.08vw, 1.2rem);
+    line-height: 1.45;
+    max-height: 4.4em;
+    overflow: auto;
+  }
+}
+
+.counter {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  color: #7c7c7c;
+}
+
+@media (max-width: 1100px) {
+  .gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .viewer {
+    height: min(100%, calc(100dvh - 40px));
+    padding: 12px 40px 14px;
+  }
+
+  .arrowButton {
+    font-size: 3.4rem;
+  }
+
+  .thumbButton {
+    width: 82px;
+    height: 66px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .card {
+    height: min(68vw, 320px);
+  }
+
+  .viewerOverlay {
+    padding: 10px;
+  }
+
+  .viewer {
+    height: min(100%, calc(100dvh - 20px));
+    padding: 30px 6px 12px;
+    gap: 8px;
+  }
+
+  .imageWrap {
+    max-height: calc(100dvh - 280px);
+  }
+
+  .closeButton {
+    top: 0;
+    right: 4px;
+    font-size: 3rem;
+  }
+
+  .arrowButton {
+    top: auto;
+    bottom: 200px;
+    transform: none;
+    font-size: 2.6rem;
+  }
+
+  .arrowLeft {
+    left: 0;
+  }
+
+  .arrowRight {
+    right: 0;
+  }
+
+  .thumbs {
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-bottom: 6px;
+  }
+
+  .thumbButton {
+    width: 74px;
+    min-width: 74px;
+    height: 58px;
+  }
+
+  .meta h2 {
+    font-size: 1.45rem;
+  }
+
+  .meta p {
+    font-size: 0.9rem;
+    line-height: 1.45;
+    max-height: 3.2em;
+  }
+
+  .counter {
+    font-size: 1rem;
+  }
 }

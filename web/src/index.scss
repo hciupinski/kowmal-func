@@ -1,1 +1,23 @@
-@import './styles/tailwind';
+@use './styles/tailwind';
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #010101;
+  color: #f4f4f4;
+  font-family: 'Manrope', sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
