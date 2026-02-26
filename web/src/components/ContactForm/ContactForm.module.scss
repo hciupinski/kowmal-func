@@ -1,3 +1,120 @@
-.contactForm {
-  // Custom styles or overrides can be added here
+.contactSection {
+  min-height: calc(100vh - 220px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 36px 0 10px;
+}
+
+.form {
+  width: min(1240px, 100%);
+  padding-top: 24px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  span {
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(1.35rem, 1.7vw, 2.65rem);
+    color: #434343;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  input,
+  textarea {
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+    color: #f4f4f4;
+    font-size: clamp(1.02rem, 1.25vw, 1.8rem);
+    font-family: 'Manrope', sans-serif;
+    padding: 4px 2px 12px;
+    outline: none;
+    transition: border-color 180ms ease;
+  }
+
+  input:focus,
+  textarea:focus {
+    border-bottom-color: rgba(255, 255, 255, 0.74);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: transparent;
+  }
+}
+
+.messageField {
+  margin-top: 56px;
+
+  textarea {
+    resize: vertical;
+    min-height: 260px;
+    line-height: 1.5;
+  }
+}
+
+.sendButton {
+  margin-top: 44px;
+  min-width: 342px;
+  padding: 22px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: transparent;
+  color: #f8f8f8;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.2rem, 1.8vw, 2rem);
+  letter-spacing: 0.22em;
+  cursor: pointer;
+}
+
+.status {
+  margin-top: 18px;
+  color: #909090;
+  font-size: 1rem;
+}
+
+@media (max-width: 900px) {
+  .contactSection {
+    padding-top: 8px;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .field span {
+    font-size: 1.4rem;
+  }
+
+  .field input,
+  .field textarea {
+    font-size: 1rem;
+  }
+
+  .messageField {
+    margin-top: 24px;
+
+    textarea {
+      min-height: 180px;
+    }
+  }
+
+  .sendButton {
+    min-width: 220px;
+    width: 100%;
+    max-width: 360px;
+    margin-top: 30px;
+    font-size: 1.1rem;
+    padding: 16px 20px;
+  }
 }

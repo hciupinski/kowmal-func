@@ -1,9 +1,13 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import App from './App';
 
-test('renders learn react link', () => {
+vi.mock('./components/Products/Products', () => ({
+  default: () => <div>Products</div>,
+}));
+
+test('renders main nav entries', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(screen.getByText(/gallery/i)).toBeInTheDocument();
+  expect(screen.getByText(/contact/i)).toBeInTheDocument();
 });

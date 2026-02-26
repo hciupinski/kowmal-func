@@ -1,40 +1,40 @@
-import React, {useEffect, useState} from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import {NavLink} from 'react-router-dom';
+import {motion} from 'motion/react';
 import styles from './Header.module.scss';
-import { useNavigate } from 'react-router-dom';
 
 const Header: React.FC = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-   
-    const navigate = useNavigate();
+  const navItems = [
+    {to: '/gallery', label: 'GALLERY'},
+    {to: '/contact', label: 'CONTACT'},
+  ];
 
-    useEffect(() => {
-        // Check if token exists in local storage
-        const token = localStorage.getItem('token');
-        setIsAuthenticated(!!token);
-    }, []);
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        // Optionally redirect to login page
-        navigate('/login');
-    };
-    
-    return (
-        <header className={`mx-6 text-white flex justify-between p-4 font-agdasima`}>
-            <div className={''}>
-                <div className="logo font-pirata">
-                    <a href={"/"}>
-                        <p className={'bold'}>kowmal.com</p>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <a href={'/contact'}>Contact</a>
-            </div>
+  return (
+    <header className={styles.header}>
+      <NavLink to="/gallery" className={styles.logoLink} aria-label="Go to gallery">
+        <img src="/images/logo-t.png" alt="Kowmal logo" className={styles.logo} />
+      </NavLink>
 
-
-        </header>
-    );
+      <nav className={styles.nav}>
+        {navItems.map((item) => (
+          <NavLink key={item.to} to={item.to} className={({isActive}) => `${styles.link} ${isActive ? styles.active : ''}`}>
+            {({isActive}) => (
+              <>
+                {item.label}
+                {isActive && (
+                  <motion.span
+                    layoutId="active-tab"
+                    className={styles.activeLine}
+                    transition={{type: 'spring', stiffness: 360, damping: 35}}
+                  />
+                )}
+              </>
+            )}
+          </NavLink>
+        ))}
+      </nav>
+    </header>
+  );
 };
 
 export default Header;

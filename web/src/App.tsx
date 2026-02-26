@@ -1,39 +1,59 @@
 import React from 'react';
-import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, Navigate, useLocation} from 'react-router-dom';
+import {AnimatePresence, motion} from 'motion/react';
 import Header from './components/Header/Header';
 import ContactForm from './components/ContactForm/ContactForm';
 import Footer from './components/Footer/Footer';
 import AdminUpload from './components/AdminUpload/AdminUpload';
 import './App.scss';
-import Login from "./components/Login/Login";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import Products from "./components/Products/Products";
-import Home from "./components/Home/Home";
-import Admin from "./components/Admin/Admin";
-import NotAuthorized from "./components/NotAuthorized/NotAuthorized";
+import Login from './components/Login/Login';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import Products from './components/Products/Products';
+import Admin from './components/Admin/Admin';
+import NotAuthorized from './components/NotAuthorized/NotAuthorized';
 
-const App: React.FC = () => {  
+const RouteTransition: React.FC<{children: React.ReactNode}> = ({children}) => (
+  <motion.div
+    initial={{opacity: 0, y: 16}}
+    animate={{opacity: 1, y: 0}}
+    exit={{opacity: 0, y: -12}}
+    transition={{duration: 0.32, ease: 'easeOut'}}
+    className="h-full"
+  >
+    {children}
+  </motion.div>
+);
+
+const AppRoutes: React.FC = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Navigate to="/gallery" replace />} />
+        <Route path="/gallery" element={<RouteTransition><Products /></RouteTransition>} />
+        <Route path="/contact" element={<RouteTransition><ContactForm /></RouteTransition>} />
+        <Route path="/login" element={<RouteTransition><Login /></RouteTransition>} />
+        <Route path="/not-authorized" element={<RouteTransition><NotAuthorized /></RouteTransition>} />
+        <Route path="/admin" element={<ProtectedRoute element={<RouteTransition><Admin /></RouteTransition>} />}>
+          <Route path="upload" element={<RouteTransition><AdminUpload /></RouteTransition>} />
+          <Route path="" element={<Navigate to="upload" />} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
+const App: React.FC = () => {
   return (
     <Router>
-      <div className="app flex flex-col min-h-screen h-full bg-black min-w-[400px]">
+      <div className="appShell">
         <Header />
-        <main className="flex-grow">
-          <div className={'container min-w-[75%] min-h-[75%] h-full mx-auto bg-opacity-80 rounded'}>
-            <Routes>
-              <Route path="/" element={<><Home /><Products /></>} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/not-authorized" element={<NotAuthorized />} />
-              <Route path="/gallery" element={<Products />} />
-              <Route path="/contact" element={<ContactForm />} />
-              {/*ProtectedRoutes*/}
-              <Route path="/admin" element={<ProtectedRoute element={<Admin />} />}>
-                <Route path={"upload"} element={<AdminUpload />} />
-                <Route path={""} element={<Navigate to={'upload'}/>} />
-              </Route>
-            </Routes>
+        <main className="contentShell">
+          <div className="contentWrap">
+            <AppRoutes />
           </div>
         </main>
-
         <Footer />
       </div>
     </Router>

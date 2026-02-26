@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
+import {getEnv} from "../../config/env";
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Login: React.FC = () => {
         navigate('/admin');
     };
     return(
-        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENTID!}>
+        <GoogleOAuthProvider clientId={getEnv('GOOGLE_CLIENTID')}>
             <section>
                 <div className="flex items-center justify-center px-6 py-8 mx-auto">
                     <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">

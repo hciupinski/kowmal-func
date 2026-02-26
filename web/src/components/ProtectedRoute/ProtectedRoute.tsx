@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
+import {getEnv} from "../../config/env";
 
 interface ProtectedRouteProps {
     element: JSX.Element;
@@ -19,7 +20,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
     const userEmail = decodedToken.email;
 
     // Access allowed emails from the environment variable and convert to an array
-    const allowedEmails = process.env.REACT_APP_ALLOWED_EMAILS!.split(',');
+    const allowedEmails = getEnv('ALLOWED_EMAILS')
+        .split(',')
+        .map(email => email.trim())
+        .filter(Boolean);
 
     // Check if the email is in the allowed list
     if (!allowedEmails.includes(userEmail)) {

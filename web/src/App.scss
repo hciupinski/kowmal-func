@@ -1,4 +1,32 @@
-.app {
-  @apply bg-main-page bg-no-repeat;
-  background-position-x: -200px;
+:root {
+  --surface: #010101;
+  --text-primary: #f4f4f4;
+  --text-muted: #8d8d8d;
+  --line: rgba(255, 255, 255, 0.3);
+}
+
+.appShell {
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 600px at 50% -200px, rgba(180, 146, 82, 0.08), transparent 70%),
+    var(--surface);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.contentShell {
+  flex: 1;
+}
+
+.contentWrap {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+}
+
+@media (max-width: 768px) {
+  .contentWrap {
+    padding: 0 14px 24px;
+  }
 }
